@@ -29,4 +29,10 @@ public class CategoryService {
                 .orElseThrow(() -> new ResourceNotFoundException("Resource not found!"));
         return new CategoryDTO(category);
     }
+
+    @Transactional
+    public CategoryDTO insert(CategoryDTO request) {
+        Category category = categoryRepository.save(request.toModel());
+        return new CategoryDTO(category);
+    }
 }
