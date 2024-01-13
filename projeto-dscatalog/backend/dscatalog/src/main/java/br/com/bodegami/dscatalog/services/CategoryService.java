@@ -1,6 +1,6 @@
 package br.com.bodegami.dscatalog.services;
 
-import br.com.bodegami.dscatalog.entities.Category;
+import br.com.bodegami.dscatalog.dto.CategoryDTO;
 import br.com.bodegami.dscatalog.repositories.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,8 +15,10 @@ public class CategoryService {
     private CategoryRepository categoryRepository;
 
     @Transactional(readOnly = true)
-    public List<Category> findAll() {
-        return categoryRepository.findAll();
+    public List<CategoryDTO> findAll() {
+        return categoryRepository.findAll()
+                .stream()
+                .map(CategoryDTO::new).toList();
     }
 
 }
