@@ -1,7 +1,6 @@
 package br.com.bodegami.dscatalog.controllers;
 
 import br.com.bodegami.dscatalog.dto.CategoryDTO;
-import br.com.bodegami.dscatalog.entities.Category;
 import br.com.bodegami.dscatalog.services.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
