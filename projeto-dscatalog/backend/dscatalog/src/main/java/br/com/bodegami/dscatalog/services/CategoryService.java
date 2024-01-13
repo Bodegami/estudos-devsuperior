@@ -4,6 +4,7 @@ import br.com.bodegami.dscatalog.dto.CategoryDTO;
 import br.com.bodegami.dscatalog.entities.Category;
 import br.com.bodegami.dscatalog.repositories.CategoryRepository;
 import br.com.bodegami.dscatalog.services.exceptions.ResourceNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,4 +36,18 @@ public class CategoryService {
         Category category = categoryRepository.save(request.toModel());
         return new CategoryDTO(category);
     }
+
+    @Transactional
+    public CategoryDTO update(Long id, CategoryDTO request) {
+        try {
+            Category entity = categoryRepository.getReferenceById(id);
+            entity.setName(request.name());
+            Category response = categoryRepository.save(entity);
+            return new CategoryDTO(response);
+        }
+        catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException(String.format("Id not found: %d", id));
+        }
+    }
+
 }
