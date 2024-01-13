@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -18,7 +17,6 @@ public class CategoryController {
 
     @GetMapping
     public ResponseEntity<List<Category>> findAll() {
-
         List<Category> categories = categoryService.findAll();
 
         return ResponseEntity.ok(categories);
