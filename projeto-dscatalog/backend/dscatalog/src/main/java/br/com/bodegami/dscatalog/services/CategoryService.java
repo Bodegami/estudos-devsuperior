@@ -3,10 +3,13 @@ package br.com.bodegami.dscatalog.services;
 import br.com.bodegami.dscatalog.dto.CategoryDTO;
 import br.com.bodegami.dscatalog.entities.Category;
 import br.com.bodegami.dscatalog.repositories.CategoryRepository;
+import br.com.bodegami.dscatalog.services.exceptions.DatabaseException;
 import br.com.bodegami.dscatalog.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -47,6 +50,18 @@ public class CategoryService {
         }
         catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException(String.format("Id not found: %d", id));
+        }
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public void delete(Long id) {
+        if (!categoryRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Recurso não encontrado");
+        }
+        try {
+            categoryRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException("Falha de integridade referencial");
         }
     }
 

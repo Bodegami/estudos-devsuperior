@@ -1,5 +1,7 @@
 package br.com.bodegami.dscatalog.controllers.exceptions;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.time.Instant;
 
 public record StandardError(
@@ -9,4 +11,5 @@ public record StandardError(
         String message,
         String path
 ) {
+
 }
