@@ -18,20 +18,18 @@ public class ResourceExceptionHandler {
 
     @ExceptionHandler(value = {ResourceNotFoundException.class})
     public ResponseEntity<StandardError> entityNotFound(ResourceNotFoundException ex, HttpServletRequest request) {
-        String error = "Resource not found!";
-        return toErrorResponse(NOT_FOUND, error, ex, request);
+        return toErrorResponse(NOT_FOUND, "Resource not found!", ex, request);
     }
 
     @ExceptionHandler(value = {DatabaseException.class})
     public ResponseEntity<StandardError> database(DatabaseException ex, HttpServletRequest request) {
-        String error = "Database Exception!";
-        return toErrorResponse(BAD_REQUEST, error, ex, request);
+        return toErrorResponse(BAD_REQUEST, "Database Exception!", ex, request);
     }
 
-    private ResponseEntity<StandardError> toErrorResponse(HttpStatus status, String error,
+    private ResponseEntity<StandardError> toErrorResponse(HttpStatus status, String errorMessage,
                                                           Exception ex, HttpServletRequest request) {
         StandardError errorResponse = new StandardError(
-                Instant.now(), status.value(), error, ex.getMessage(), request.getRequestURI());
+                Instant.now(), status.value(), errorMessage, ex.getMessage(), request.getRequestURI());
 
         return ResponseEntity.status(status).body(errorResponse);
     }
