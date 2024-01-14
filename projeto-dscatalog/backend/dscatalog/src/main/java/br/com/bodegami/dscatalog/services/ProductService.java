@@ -1,10 +1,13 @@
 package br.com.bodegami.dscatalog.services;
 
 import br.com.bodegami.dscatalog.dto.ProductDTO;
+import br.com.bodegami.dscatalog.entities.Category;
 import br.com.bodegami.dscatalog.entities.Product;
+import br.com.bodegami.dscatalog.repositories.CategoryRepository;
 import br.com.bodegami.dscatalog.repositories.ProductRepository;
 import br.com.bodegami.dscatalog.services.exceptions.DatabaseException;
 import br.com.bodegami.dscatalog.services.exceptions.ResourceNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -19,6 +22,9 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     @Transactional(readOnly = true)
     public Page<ProductDTO> findAllPaged(PageRequest pageRequest) {
         return productRepository.findAll(pageRequest)
@@ -32,24 +38,26 @@ public class ProductService {
         return new ProductDTO(entity, entity.getCategories());
     }
 
-//    @Transactional
-//    public ProductDTO insert(ProductDTO request) {
-//        Product product = productRepository.save(request.toModel());
-//        return new ProductDTO(product);
-//    }
+    @Transactional
+    public ProductDTO insert(ProductDTO dto) {
+        Product entity = new Product();
+        copyDtoToEntity(dto, entity);
+        Product response = productRepository.save(entity);
+        return new ProductDTO(response);
+    }
 
-//    @Transactional
-//    public ProductDTO update(Long id, ProductDTO request) {
-//        try {
-//            Product entity = productRepository.getReferenceById(id);
-//            entity.setName(request.name());
-//            Product response = productRepository.save(entity);
-//            return new ProductDTO(response);
-//        }
-//        catch (EntityNotFoundException e) {
-//            throw new ResourceNotFoundException(String.format("Id not found: %d", id));
-//        }
-//    }
+    @Transactional
+    public ProductDTO update(Long id, ProductDTO dto) {
+        try {
+            Product entity = productRepository.getReferenceById(id);
+            copyDtoToEntity(dto, entity);
+            Product response = productRepository.save(entity);
+            return new ProductDTO(response);
+        }
+        catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException(String.format("Id not found: %d", id));
+        }
+    }
 
     @Transactional(propagation = Propagation.SUPPORTS)
     public void delete(Long id) {
@@ -61,6 +69,19 @@ public class ProductService {
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException("Falha de integridade referencial");
         }
+    }
+
+    private void copyDtoToEntity(ProductDTO dto, Product entity) {
+        entity.setName(dto.getName());
+        entity.setDescription(dto.getDescription());
+        entity.setDate(dto.getDate());
+        entity.setImgUrl(dto.getImgUrl());
+        entity.setPrice(dto.getPrice());
+
+        dto.getCategories().forEach(cat -> {
+            Category category = categoryRepository.getReferenceById(cat.id());
+            entity.getCategories().add(category);
+        });
     }
 
 }

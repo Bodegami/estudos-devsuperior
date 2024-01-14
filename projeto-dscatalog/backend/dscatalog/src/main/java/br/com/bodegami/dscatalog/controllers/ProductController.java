@@ -9,6 +9,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping(value = "/products")
@@ -34,23 +37,23 @@ public class ProductController {
         ProductDTO dto = productService.findById(id);
         return ResponseEntity.ok(dto);
     }
-//
-//    @PostMapping
-//    public ResponseEntity<ProductDTO> insert(@RequestBody CategoryDTO request) {
-//        ProductDTO response = productService.insert(request);
-//        URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri()
-//                .path("/{id}")
-//                .buildAndExpand(response.id())
-//                .toUri();
-//
-//        return ResponseEntity.created(uri).body(response);
-//    }
 
-//    @PutMapping(value = "/{id}")
-//    public ResponseEntity<ProductDTO> update(@PathVariable Long id, @RequestBody ProductDTO request) {
-//        ProductDTO response = productService.update(id, request);
-//        return ResponseEntity.ok(response);
-//    }
+    @PostMapping
+    public ResponseEntity<ProductDTO> insert(@RequestBody ProductDTO request) {
+        ProductDTO response = productService.insert(request);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri()
+                .path("/{id}")
+                .buildAndExpand(response.getId())
+                .toUri();
+
+        return ResponseEntity.created(uri).body(response);
+    }
+
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<ProductDTO> update(@PathVariable Long id, @RequestBody ProductDTO request) {
+        ProductDTO response = productService.update(id, request);
+        return ResponseEntity.ok(response);
+    }
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {

@@ -73,9 +73,4 @@ public class ProductDTO {
         return categories;
     }
 
-//    public Product toModel() {
-//        Product product = new Product(id, name, description, price, imgUrl, date);
-//        product.
-//    }
-
 }
