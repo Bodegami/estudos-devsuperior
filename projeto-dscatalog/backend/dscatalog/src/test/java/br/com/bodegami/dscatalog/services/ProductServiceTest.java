@@ -8,6 +8,7 @@ import br.com.bodegami.dscatalog.repositories.ProductRepository;
 import br.com.bodegami.dscatalog.services.exceptions.DatabaseException;
 import br.com.bodegami.dscatalog.services.exceptions.ResourceNotFoundException;
 import br.com.bodegami.dscatalog.tests.Factory;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -60,6 +61,36 @@ class ProductServiceTest {
         category = Factory.createCategory();
         categoryId = category.getId();
 
+    }
+
+    @Test
+    public void updateShouldThrowResourceNotFoundExceptionWhenIdDoesNotExists() {
+
+        doThrow(EntityNotFoundException.class).when(productRepository).getReferenceById(nonExistingId);
+
+        assertThrows(ResourceNotFoundException.class, () -> {
+            service.update(nonExistingId, productDTO);
+        });
+
+        verify(productRepository, times(1)).getReferenceById(nonExistingId);
+    }
+
+    @Test
+    public void updateShouldReturnProductDTOWhenIdExists() {
+
+        when(productRepository.getReferenceById(existingId)).thenReturn(product);
+        when(productRepository.save(any())).thenReturn(product);
+
+        ProductDTO result = service.update(existingId, productDTO);
+
+        assertEquals(existingId, result.getId());
+        assertEquals(productDTO.getName(), result.getName());
+        assertEquals(productDTO.getPrice(), result.getPrice());
+        assertEquals(productDTO.getDescription(), result.getDescription());
+        assertEquals(productDTO.getImgUrl(), result.getImgUrl());
+
+        verify(productRepository, times(1)).getReferenceById(existingId);
+        verify(productRepository, times(1)).save(any());
     }
 
 
