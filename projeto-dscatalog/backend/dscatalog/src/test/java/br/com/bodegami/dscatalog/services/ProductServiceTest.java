@@ -60,13 +60,29 @@ class ProductServiceTest {
         category = Factory.createCategory();
         categoryId = category.getId();
 
+    }
 
 
+    @Test
+    public void findByIdShouldThrowResourceNotFoundExceptionWhenIdDoesNotExists() {
 
-
-        when(productRepository.findById(existingId)).thenReturn(Optional.of(product));
         when(productRepository.findById(nonExistingId)).thenReturn(Optional.empty());
 
+        assertThrows(ResourceNotFoundException.class, () -> service.findById(nonExistingId));
+
+        verify(productRepository, times(1)).findById(nonExistingId);
+    }
+
+    @Test
+    public void findByIdShouldReturnOptionalOfProductDTOWhenIdExists() {
+
+        when(productRepository.findById(existingId)).thenReturn(Optional.of(product));
+
+        ProductDTO result = service.findById(existingId);
+
+        assertNotNull(result);
+
+        verify(productRepository, times(1)).findById(existingId);
     }
 
     @Test
