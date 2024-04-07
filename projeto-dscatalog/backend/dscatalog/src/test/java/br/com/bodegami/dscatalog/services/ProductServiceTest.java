@@ -1,7 +1,9 @@
 package br.com.bodegami.dscatalog.services;
 
 import br.com.bodegami.dscatalog.dto.ProductDTO;
+import br.com.bodegami.dscatalog.entities.Category;
 import br.com.bodegami.dscatalog.entities.Product;
+import br.com.bodegami.dscatalog.repositories.CategoryRepository;
 import br.com.bodegami.dscatalog.repositories.ProductRepository;
 import br.com.bodegami.dscatalog.services.exceptions.DatabaseException;
 import br.com.bodegami.dscatalog.services.exceptions.ResourceNotFoundException;
@@ -34,11 +36,17 @@ class ProductServiceTest {
     @Mock
     private ProductRepository productRepository;
 
+    @Mock
+    private CategoryRepository categoryRepository;
+
     private long existingId;
     private long nonExistingId;
     private long dependentId;
     private PageImpl<Product> page;
     private Product product;
+    private ProductDTO productDTO;
+    private long categoryId;
+    private Category category;
 
 
     @BeforeEach
@@ -47,15 +55,32 @@ class ProductServiceTest {
         nonExistingId = 100L;
         dependentId = 3L;
         product = Factory.createProduct();
+        productDTO = Factory.createProductDTO();
         page = new PageImpl<>(List.of(product));
+        category = Factory.createCategory();
+        categoryId = category.getId();
 
 
 
-        when(productRepository.save(any())).thenReturn(product);
+
 
         when(productRepository.findById(existingId)).thenReturn(Optional.of(product));
         when(productRepository.findById(nonExistingId)).thenReturn(Optional.empty());
 
+    }
+
+    @Test
+    public void insertShouldReturnProductDTO() {
+
+        when(categoryRepository.getReferenceById(categoryId)).thenReturn(category);
+        when(productRepository.save(any())).thenReturn(product);
+
+        ProductDTO result = service.insert(productDTO);
+
+        assertEquals(1L, result.getId());
+
+        verify(categoryRepository, times(1)).getReferenceById(categoryId);
+        verify(productRepository, times(1)).save(any());
     }
 
 
