@@ -79,6 +79,7 @@ class ProductServiceTest {
     public void updateShouldReturnProductDTOWhenIdExists() {
 
         when(productRepository.getReferenceById(existingId)).thenReturn(product);
+        when(categoryRepository.getReferenceById(categoryId)).thenReturn(category);
         when(productRepository.save(any())).thenReturn(product);
 
         ProductDTO result = service.update(existingId, productDTO);
@@ -90,6 +91,7 @@ class ProductServiceTest {
         assertEquals(productDTO.getImgUrl(), result.getImgUrl());
 
         verify(productRepository, times(1)).getReferenceById(existingId);
+        verify(categoryRepository, times(1)).getReferenceById(categoryId);
         verify(productRepository, times(1)).save(any());
     }
 
