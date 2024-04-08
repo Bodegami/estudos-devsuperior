@@ -55,14 +55,10 @@ class ProductRepositoryTest {
 
     @Test
     public void deleteShouldDeleteObjectWhenIdExists() {
-        //ACT
-
-        //ARRANGE
         productRepository.deleteById(existingId);
 
         Optional<Product> result = productRepository.findById(existingId);
 
-        //ASSERT
         assertTrue(result.isEmpty());
     }
 
