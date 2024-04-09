@@ -43,7 +43,7 @@ public class CategoryService {
     public CategoryDTO update(Long id, CategoryDTO request) {
         try {
             Category entity = categoryRepository.getReferenceById(id);
-            entity.setName(request.name());
+            entity.setName(request.getName());
             Category response = categoryRepository.save(entity);
             return new CategoryDTO(response);
         }

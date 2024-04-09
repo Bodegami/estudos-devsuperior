@@ -38,7 +38,7 @@ public class CategoryController {
         CategoryDTO response = categoryService.insert(request);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri()
                 .path("/{id}")
-                .buildAndExpand(response.id())
+                .buildAndExpand(response.getId())
                 .toUri();
 
         return ResponseEntity.created(uri).body(response);

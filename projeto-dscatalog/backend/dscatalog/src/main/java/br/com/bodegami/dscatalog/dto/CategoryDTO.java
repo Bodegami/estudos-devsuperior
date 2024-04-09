@@ -2,17 +2,41 @@ package br.com.bodegami.dscatalog.dto;
 
 import br.com.bodegami.dscatalog.entities.Category;
 
-public record CategoryDTO(
-        Long id,
-        String name
-) {
+public class CategoryDTO {
+
+    private Long id;
+    private String name;
+
+    public CategoryDTO() {
+    }
+
+    public CategoryDTO(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     public CategoryDTO(Category entity) {
-        this(entity.getId(), entity.getName());
+        this.id = entity.getId();
+        this.name = entity.getName();
     }
 
     public Category toModel() {
         return new Category(id, name);
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }
