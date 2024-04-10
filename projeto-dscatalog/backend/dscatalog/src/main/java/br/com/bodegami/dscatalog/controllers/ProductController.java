@@ -2,6 +2,7 @@ package br.com.bodegami.dscatalog.controllers;
 
 import br.com.bodegami.dscatalog.dto.ProductDTO;
 import br.com.bodegami.dscatalog.services.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,7 +35,7 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<ProductDTO> insert(@RequestBody ProductDTO request) {
+    public ResponseEntity<ProductDTO> insert(@Valid @RequestBody ProductDTO request) {
         ProductDTO response = productService.insert(request);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri()
                 .path("/{id}")
@@ -45,7 +46,7 @@ public class ProductController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<ProductDTO> update(@PathVariable Long id, @RequestBody ProductDTO request) {
+    public ResponseEntity<ProductDTO> update(@PathVariable Long id, @Valid @RequestBody ProductDTO request) {
         ProductDTO response = productService.update(id, request);
         return ResponseEntity.ok(response);
     }
