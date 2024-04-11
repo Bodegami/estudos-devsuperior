@@ -2,6 +2,7 @@ package br.com.bodegami.dscatalog.controllers;
 
 import br.com.bodegami.dscatalog.dto.UserDTO;
 import br.com.bodegami.dscatalog.dto.UserInsertDTO;
+import br.com.bodegami.dscatalog.dto.UserUpdateDTO;
 import br.com.bodegami.dscatalog.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ public class UserController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<UserDTO> update(@PathVariable Long id, @Valid @RequestBody UserDTO request) {
+    public ResponseEntity<UserDTO> update(@PathVariable Long id, @Valid @RequestBody UserUpdateDTO request) {
         UserDTO response = userService.update(id, request);
         return ResponseEntity.ok(response);
     }

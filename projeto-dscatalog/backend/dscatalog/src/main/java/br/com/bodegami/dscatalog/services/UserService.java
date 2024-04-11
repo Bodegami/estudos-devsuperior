@@ -3,6 +3,7 @@ package br.com.bodegami.dscatalog.services;
 import br.com.bodegami.dscatalog.dto.RoleDTO;
 import br.com.bodegami.dscatalog.dto.UserDTO;
 import br.com.bodegami.dscatalog.dto.UserInsertDTO;
+import br.com.bodegami.dscatalog.dto.UserUpdateDTO;
 import br.com.bodegami.dscatalog.entities.Category;
 import br.com.bodegami.dscatalog.entities.Role;
 import br.com.bodegami.dscatalog.entities.User;
@@ -56,7 +57,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO update(Long id, UserDTO dto) {
+    public UserDTO update(Long id, UserUpdateDTO dto) {
         try {
             User entity = userRepository.getReferenceById(id);
             copyDtoToEntity(dto, entity);
