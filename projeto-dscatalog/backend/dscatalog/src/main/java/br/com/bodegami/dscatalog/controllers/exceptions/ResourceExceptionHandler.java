@@ -51,9 +51,6 @@ public class ResourceExceptionHandler {
                 errorMessage,
                 ex.getMessage(),
                 request.getRequestURI()
-
-
-
         );
 
         return ResponseEntity.status(status).body(errorResponse);
