@@ -81,6 +81,9 @@ public class CustomPasswordAuthenticationProvider implements AuthenticationProvi
 				.map(scope -> scope.getAuthority())
 				.filter(scope -> registeredClient.getScopes().contains(scope))
 				.collect(Collectors.toSet());
+
+		System.out.println(authorizedScopes.toString());
+		user.getAuthorities().forEach(System.out::println);
 		
 		//-----------Create a new Security Context Holder Context----------
 		OAuth2ClientAuthenticationToken oAuth2ClientAuthenticationToken = (OAuth2ClientAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
