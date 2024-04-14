@@ -4,9 +4,9 @@ import br.com.bodegami.dscatalog.dto.RoleDTO;
 import br.com.bodegami.dscatalog.dto.UserDTO;
 import br.com.bodegami.dscatalog.dto.UserInsertDTO;
 import br.com.bodegami.dscatalog.dto.UserUpdateDTO;
-import br.com.bodegami.dscatalog.entities.Category;
 import br.com.bodegami.dscatalog.entities.Role;
 import br.com.bodegami.dscatalog.entities.User;
+import br.com.bodegami.dscatalog.projections.UserDetailsProjection;
 import br.com.bodegami.dscatalog.repositories.RoleRepository;
 import br.com.bodegami.dscatalog.repositories.UserRepository;
 import br.com.bodegami.dscatalog.services.exceptions.DatabaseException;
@@ -16,13 +16,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
@@ -31,7 +36,7 @@ public class UserService {
     private RoleRepository roleRepository;
 
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
 
     @Transactional(readOnly = true)
@@ -93,4 +98,21 @@ public class UserService {
         }
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+        List<UserDetailsProjection> result = userRepository.searchUserAndRolesByEmail(username);
+        if (result.size() == 0) {
+            throw new UsernameNotFoundException("Email not found");
+        }
+
+        User user = new User(); 
+        user.setEmail(result.get(0).getUsername());
+        user.setPassword(result.get(0).getPassword());
+        for (UserDetailsProjection projection : result) {
+            user.addRole(new Role(projection.getRoleId(), projection.getAuthority()));
+        }
+
+        return user;
+    }
 }
